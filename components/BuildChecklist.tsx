@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { BuildStep } from "@/lib/types";
 
 interface Props {
@@ -10,20 +11,55 @@ interface Props {
 
 export default function BuildChecklist({ projectSlug, steps }: Props) {
   const storageKey = `checklist-${projectSlug}`;
-  const [done, setDone] = useState<Set<string>>(new Set());
+  const { data: session } = useSession();
+  const isAuthed = !!session?.user;
 
+  const [done, setDone] = useState<Set<string>>(new Set());
+  const [syncing, setSyncing] = useState(false);
+
+  // Load: DB when signed in, localStorage when not
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setDone(new Set(JSON.parse(saved)));
-    } catch {}
-  }, [storageKey]);
+    if (isAuthed) {
+      fetch(`/api/progress?slug=${projectSlug}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data.completedSteps)) {
+            setDone(new Set(data.completedSteps));
+          }
+        })
+        .catch(() => {});
+    } else {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) setDone(new Set(JSON.parse(saved)));
+      } catch {}
+    }
+  }, [isAuthed, projectSlug, storageKey]);
+
+  // Save to DB (debounced via useCallback)
+  const syncToDB = useCallback(
+    (steps: string[]) => {
+      setSyncing(true);
+      fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: projectSlug, completedSteps: steps }),
+      })
+        .catch(() => {})
+        .finally(() => setSyncing(false));
+    },
+    [projectSlug]
+  );
 
   function toggle(id: string) {
     setDone((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
-      try { localStorage.setItem(storageKey, JSON.stringify([...next])); } catch {}
+      const arr = [...next];
+      // Always keep localStorage as offline fallback
+      try { localStorage.setItem(storageKey, JSON.stringify(arr)); } catch {}
+      // Sync to DB when signed in
+      if (isAuthed) syncToDB(arr);
       return next;
     });
   }
@@ -40,8 +76,14 @@ export default function BuildChecklist({ projectSlug, steps }: Props) {
         <span style={{ color: "var(--subtle)", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
           Build Checklist
         </span>
-        <span style={{ fontSize: 12, color: "var(--subtle)" }}>
-          {completed}/{mainSteps.length} steps · {pct}%
+        <span style={{ fontSize: 12, color: "var(--subtle)", display: "flex", alignItems: "center", gap: 6 }}>
+          {syncing && (
+            <span style={{ fontSize: 10, color: "var(--muted)" }}>saving…</span>
+          )}
+          {isAuthed && !syncing && (
+            <span style={{ fontSize: 10, color: "#22c55e66" }}>☁ synced</span>
+          )}
+          {completed}/{mainSteps.length} · {pct}%
         </span>
       </div>
 

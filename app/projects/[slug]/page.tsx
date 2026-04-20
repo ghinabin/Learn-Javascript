@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getProject } from "@/lib/projects";
 import { TIER_META, Concept } from "@/lib/types";
 import BuildChecklist from "@/components/BuildChecklist";
+import AuthButton from "@/components/AuthButton";
+import { LAYOUT } from "@/lib/layout";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -18,31 +20,38 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <main style={{ minHeight: "100vh", padding: "0 0 80px" }}>
 
-      {/* Top nav */}
+      {/* Top nav — content aligned to same container as page body */}
       <nav style={{
         borderBottom: "1px solid var(--surface-2)",
-        padding: "14px 24px",
-        display: "flex", alignItems: "center", gap: 12,
         position: "sticky", top: 0, zIndex: 10,
         background: "var(--bg)",
         backdropFilter: "blur(8px)",
       }}>
-        <Link href="/" style={{
-          fontSize: 12, color: "var(--muted)", textDecoration: "none",
-          display: "flex", alignItems: "center", gap: 6,
+        <div style={{
+          maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto",
+          padding: `14px 40px`,
+          display: "flex", alignItems: "center", gap: 12,
         }}>
-          ← Dashboard
-        </Link>
-        <span style={{ color: "var(--surface-2)" }}>|</span>
-        <span style={{
-          fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px",
-          color: meta.color, background: meta.badge + "33", padding: "2px 8px", borderRadius: 99,
-        }}>
-          Tier {project.tier} · {meta.name}
-        </span>
+          <Link href="/" style={{
+            fontSize: 12, color: "var(--muted)", textDecoration: "none",
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            ← Dashboard
+          </Link>
+          <span style={{ color: "var(--surface-2)" }}>|</span>
+          <span style={{
+            fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px",
+            color: meta.color, background: meta.badge + "33", padding: "2px 8px", borderRadius: 99,
+          }}>
+            Tier {project.tier} · {meta.name}
+          </span>
+          <div style={{ marginLeft: "auto" }}>
+            <AuthButton />
+          </div>
+        </div>
       </nav>
 
-      <div style={{ maxWidth: 820, margin: "0 auto", padding: "40px 20px 0" }}>
+      <div style={{ maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto", padding: `40px 40px 0` }}>
 
         {/* Project header */}
         <div style={{ marginBottom: 48 }}>
@@ -74,11 +83,11 @@ export default async function ProjectPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Two-column layout: concepts left, checklist right (stacks on mobile) */}
+        {/* Two-column layout: concepts left, checklist right */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 1fr) 340px",
-          gap: 40,
+          gridTemplateColumns: `minmax(0, 1fr) ${LAYOUT.lessonRightCol}px`,
+          gap: LAYOUT.lessonGap,
           alignItems: "start",
         }}>
 
@@ -105,7 +114,7 @@ export default async function ProjectPage({ params }: Props) {
           </div>
 
           {/* RIGHT — Checklist (sticky) */}
-          <div style={{ position: "sticky", top: 72 }}>
+          <div style={{ position: "sticky", top: LAYOUT.stickyTop }}>
             <SectionHeading>Build Guide</SectionHeading>
             <div style={{
               background: "var(--surface)",

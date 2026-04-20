@@ -1,9 +1,31 @@
 import DashboardProgress from "@/components/DashboardProgress";
+import AuthButton from "@/components/AuthButton";
+import { LAYOUT } from "@/lib/layout";
 
 export default function HomePage() {
   return (
-    <main style={{ minHeight: "100vh", padding: "32px 16px 80px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+    <main style={{ minHeight: "100vh", padding: "0 0 80px" }}>
+      {/* Site nav */}
+      <nav style={{
+        borderBottom: "1px solid var(--surface-2)",
+        position: "sticky", top: 0, zIndex: 10,
+        background: "var(--bg)", backdropFilter: "blur(8px)",
+      }}>
+        <div style={{
+          maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto",
+          padding: "14px 40px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <span style={{
+            fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, color: "var(--bright)",
+          }}>
+            learn<span style={{ color: "var(--yellow)" }}>JS</span>
+          </span>
+          <AuthButton />
+        </div>
+      </nav>
+
+      <div style={{ maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto", padding: `40px 40px 0` }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
