@@ -1,6 +1,5 @@
 import DashboardProgress from "@/components/DashboardProgress";
 import AuthButton from "@/components/AuthButton";
-import { LAYOUT } from "@/lib/layout";
 
 export default function HomePage() {
   return (
@@ -11,11 +10,7 @@ export default function HomePage() {
         position: "sticky", top: 0, zIndex: 10,
         background: "var(--bg)", backdropFilter: "blur(8px)",
       }}>
-        <div style={{
-          maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto",
-          padding: "14px 40px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{
             fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, color: "var(--bright)",
           }}>
@@ -25,7 +20,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      <div style={{ maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto", padding: `40px 40px 0` }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 40px 0" }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>

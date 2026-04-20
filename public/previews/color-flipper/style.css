@@ -1,0 +1,77 @@
+/* ── Reset ────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Body ─────────────────────────────────── */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* JavaScript will change this background color */
+  background-color: #ffffff;
+  transition: background-color 0.4s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── Card ─────────────────────────────────── */
+.container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 40px 48px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* ── Color display ────────────────────────── */
+.color-display {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 28px;
+  letter-spacing: 0.3px;
+}
+
+.color-display strong {
+  display: block;
+  font-size: 28px;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  margin-top: 6px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+
+/* ── Button ───────────────────────────────── */
+#btn {
+  background: #fff;
+  color: #333;
+  border: none;
+  border-radius: 99px;
+  padding: 14px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+#btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+#btn:active {
+  transform: translateY(0);
+}

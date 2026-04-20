@@ -4,12 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { BuildStep } from "@/lib/types";
 
+interface NextProjectInfo {
+  slug: string;
+  name: string;
+  id: number;
+}
+
 interface Props {
   projectSlug: string;
   steps: BuildStep[];
+  nextProject?: NextProjectInfo | null;
 }
 
-export default function BuildChecklist({ projectSlug, steps }: Props) {
+export default function BuildChecklist({ projectSlug, steps, nextProject }: Props) {
   const storageKey = `checklist-${projectSlug}`;
   const { data: session } = useSession();
   const isAuthed = !!session?.user;
@@ -70,35 +77,29 @@ export default function BuildChecklist({ projectSlug, steps }: Props) {
   const pct = mainSteps.length ? Math.round((completed / mainSteps.length) * 100) : 0;
 
   return (
-    <div>
-      {/* Progress header */}
-      <div className="flex items-center justify-between mb-3">
-        <span style={{ color: "var(--subtle)", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
-          Build Checklist
-        </span>
-        <span style={{ fontSize: 12, color: "var(--subtle)", display: "flex", alignItems: "center", gap: 6 }}>
-          {syncing && (
-            <span style={{ fontSize: 10, color: "var(--muted)" }}>saving…</span>
-          )}
-          {isAuthed && !syncing && (
-            <span style={{ fontSize: 10, color: "#22c55e66" }}>☁ synced</span>
-          )}
-          {completed}/{mainSteps.length} · {pct}%
-        </span>
+    <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+
+      {/* Sticky header — progress title + bar */}
+      <div style={{ padding: "20px 20px 16px", flexShrink: 0, borderBottom: "1px solid var(--surface-2)" }}>
+        <div className="flex items-center justify-between mb-3">
+          <span style={{ color: "var(--subtle)", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
+            Build Checklist
+          </span>
+          <span style={{ fontSize: 12, color: "var(--subtle)", display: "flex", alignItems: "center", gap: 6 }}>
+            {syncing && (
+              <span style={{ fontSize: 10, color: "var(--muted)" }}>saving…</span>
+            )}
+            {isAuthed && !syncing && (
+              <span style={{ fontSize: 10, color: "#22c55e66" }}>☁ synced</span>
+            )}
+            {completed}/{mainSteps.length} · {pct}%
+          </span>
+        </div>
+
       </div>
 
-      {/* Progress bar */}
-      <div style={{ height: 4, background: "var(--surface-2)", borderRadius: 99, marginBottom: 20, overflow: "hidden" }}>
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            background: "linear-gradient(90deg, #22c55e, #3b82f6)",
-            borderRadius: 99,
-            transition: "width 0.4s ease",
-          }}
-        />
-      </div>
+      {/* Scrollable checklist body */}
+      <div style={{ overflowY: "auto", flex: 1, minHeight: 0, padding: "16px 20px 20px" }}>
 
       {/* Main steps */}
       <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -161,6 +162,15 @@ export default function BuildChecklist({ projectSlug, steps }: Props) {
                       fontFamily: "var(--font-mono)",
                     }}>
                       💡 {step.hint}
+                    </div>
+                  )}
+                  {/* Common error */}
+                  {step.commonError && !checked && (
+                    <div style={{
+                      marginTop: 4, fontSize: 12,
+                      color: "#f87171", lineHeight: 1.6,
+                    }}>
+                      ⚠ {step.commonError}
                     </div>
                   )}
                 </div>
@@ -233,17 +243,44 @@ export default function BuildChecklist({ projectSlug, steps }: Props) {
       {/* All done message */}
       {pct === 100 && (
         <div style={{
-          marginTop: 20, padding: "16px 20px",
+          marginTop: 20, padding: "20px",
           background: "#22c55e10", border: "1px solid #22c55e33",
           borderRadius: 12, textAlign: "center",
         }}>
-          <div style={{ fontSize: 24, marginBottom: 6 }}>🎉</div>
+          <div style={{ fontSize: 22, marginBottom: 6 }}>🎉</div>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#4ade80" }}>Project Complete!</div>
-          <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-            Head back to the dashboard and unlock Project 02.
-          </div>
+          {nextProject ? (
+            <>
+              <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4, marginBottom: 14 }}>
+                Ready for the next challenge?
+              </div>
+              <a
+                href={`/projects/${nextProject.slug}`}
+                style={{
+                  display: "inline-block",
+                  padding: "10px 20px",
+                  background: "#22c55e",
+                  color: "#09090b",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  borderRadius: 8,
+                  textDecoration: "none",
+                  letterSpacing: "0.2px",
+                }}
+              >
+                Next: {String(nextProject.id).padStart(2, "0")} · {nextProject.name} →
+              </a>
+            </>
+          ) : (
+            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
+              You&apos;ve completed all projects. Back to the{" "}
+              <a href="/" style={{ color: "#4ade80" }}>dashboard</a>.
+            </div>
+          )}
         </div>
       )}
+
+      </div>{/* end scrollable body */}
     </div>
   );
 }

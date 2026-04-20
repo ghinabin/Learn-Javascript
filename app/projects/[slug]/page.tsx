@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProject } from "@/lib/projects";
+import { getProject, getAdjacentProjects } from "@/lib/projects";
 import { TIER_META, Concept } from "@/lib/types";
 import BuildChecklist from "@/components/BuildChecklist";
 import AuthButton from "@/components/AuthButton";
-import { LAYOUT } from "@/lib/layout";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -16,6 +15,7 @@ export default async function ProjectPage({ params }: Props) {
   if (!project) notFound();
 
   const meta = TIER_META[project.tier];
+  const { prev: prevProject, next: nextProject } = getAdjacentProjects(slug);
 
   return (
     <main style={{ minHeight: "100vh", padding: "0 0 80px" }}>
@@ -27,11 +27,7 @@ export default async function ProjectPage({ params }: Props) {
         background: "var(--bg)",
         backdropFilter: "blur(8px)",
       }}>
-        <div style={{
-          maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto",
-          padding: `14px 40px`,
-          display: "flex", alignItems: "center", gap: 12,
-        }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 40px", display: "flex", alignItems: "center", gap: 12 }}>
           <Link href="/" style={{
             fontSize: 12, color: "var(--muted)", textDecoration: "none",
             display: "flex", alignItems: "center", gap: 6,
@@ -51,7 +47,7 @@ export default async function ProjectPage({ params }: Props) {
         </div>
       </nav>
 
-      <div style={{ maxWidth: LAYOUT.containerMaxWidth, margin: "0 auto", padding: `40px 40px 0` }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "40px 40px 0" }}>
 
         {/* Project header */}
         <div style={{ marginBottom: 48 }}>
@@ -67,6 +63,19 @@ export default async function ProjectPage({ params }: Props) {
           </h1>
           <p style={{ fontSize: 15, color: "var(--subtle)", lineHeight: 1.6, maxWidth: 560 }}>
             {project.tagline}
+            {project.previewPath && (
+              <>
+                {" "}
+                <a
+                  href={project.previewPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: meta.color, textDecoration: "none", fontSize: 13 }}
+                >
+                  ▶ See it live
+                </a>
+              </>
+            )}
           </p>
 
           {/* Concept pills */}
@@ -84,12 +93,7 @@ export default async function ProjectPage({ params }: Props) {
         </div>
 
         {/* Two-column layout: concepts left, checklist right */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: `minmax(0, 1fr) ${LAYOUT.lessonRightCol}px`,
-          gap: LAYOUT.lessonGap,
-          alignItems: "start",
-        }}>
+        <div className="grid items-start gap-[32px] lg:gap-[48px] lg:[grid-template-columns:minmax(0,1fr)_360px]">
 
           {/* LEFT — Concepts */}
           <div>
@@ -113,16 +117,26 @@ export default async function ProjectPage({ params }: Props) {
             )}
           </div>
 
-          {/* RIGHT — Checklist (sticky) */}
-          <div style={{ position: "sticky", top: LAYOUT.stickyTop }}>
+          {/* RIGHT — Checklist (sticky on desktop, static on tablet) */}
+          <div className="lg:sticky lg:top-[68px]" style={{ display: "flex", flexDirection: "column", maxHeight: "calc(100vh - 68px)" }}>
             <SectionHeading>Build Guide</SectionHeading>
             <div style={{
               background: "var(--surface)",
               border: "1px solid var(--surface-2)",
-              borderRadius: 14, padding: "20px",
+              borderRadius: 14,
+              overflow: "hidden",
+              padding: 0,
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minHeight: 0,
             }}>
               {project.steps.length > 0 ? (
-                <BuildChecklist projectSlug={project.slug} steps={project.steps} />
+                <BuildChecklist
+                  projectSlug={project.slug}
+                  steps={project.steps}
+                  nextProject={nextProject ? { slug: nextProject.slug, name: nextProject.name, id: nextProject.id } : null}
+                />
               ) : (
                 <p style={{ fontSize: 13, color: "var(--muted)", textAlign: "center" }}>
                   Steps will appear here once the lesson is ready.
@@ -130,6 +144,38 @@ export default async function ProjectPage({ params }: Props) {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Prev / Next navigation */}
+        <div style={{
+          marginTop: 64,
+          paddingTop: 32,
+          borderTop: "1px solid var(--surface-2)",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 16,
+        }}>
+          {prevProject ? (
+            <Link href={`/projects/${prevProject.slug}`} style={{
+              textDecoration: "none",
+              display: "flex", flexDirection: "column", gap: 4,
+              padding: "16px 20px",
+              background: "var(--surface)",
+              border: "1px solid var(--surface-2)",
+              borderRadius: 12,
+              transition: "border-color 0.15s",
+            }}>
+              <span style={{ fontSize: 11, color: "var(--muted)", letterSpacing: "0.5px" }}>← Previous</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>
+                {String(prevProject.id).padStart(2, "0")} · {prevProject.name}
+              </span>
+              <span style={{ fontSize: 11, color: "var(--muted)" }}>
+                Tier {prevProject.tier} · {TIER_META[prevProject.tier].name}
+              </span>
+            </Link>
+          ) : <div />}
+
+          <div />
         </div>
       </div>
     </main>
@@ -224,10 +270,40 @@ function ConceptSection({
         </div>
       ))}
 
+      {/* Why it matters */}
+      {concept.whyItMatters && (
+        <div style={{
+          marginTop: 12,
+          padding: "12px 16px",
+          background: "#3b82f610",
+          border: "1px solid #3b82f633",
+          borderRadius: 8,
+          fontSize: 13, color: "#60a5fa", lineHeight: 1.6,
+        }}>
+          <span style={{ fontWeight: 700 }}>Why it matters: </span>
+          {concept.whyItMatters}
+        </div>
+      )}
+
+      {/* Common mistake */}
+      {concept.commonMistake && (
+        <div style={{
+          marginTop: 8,
+          padding: "12px 16px",
+          background: "#ef444410",
+          border: "1px solid #ef444433",
+          borderRadius: 8,
+          fontSize: 13, color: "#f87171", lineHeight: 1.6,
+        }}>
+          <span style={{ fontWeight: 700 }}>Common mistake: </span>
+          {concept.commonMistake}
+        </div>
+      )}
+
       {/* Key point callout */}
       {concept.keyPoint && (
         <div style={{
-          marginTop: 16,
+          marginTop: 8,
           padding: "12px 16px",
           background: accentColor + "10",
           border: `1px solid ${accentColor}33`,

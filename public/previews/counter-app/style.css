@@ -1,0 +1,109 @@
+/* ── Reset ────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Body ─────────────────────────────────── */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a2e;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── Card ─────────────────────────────────── */
+.container {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 48px 56px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  min-width: 280px;
+}
+
+h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+/* ── Count display ────────────────────────── */
+.count {
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  margin-bottom: 36px;
+  transition: color 0.25s ease, transform 0.1s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+/* JavaScript adds these classes conditionally */
+.count.positive { color: #4ade80; }   /* green when above 0  */
+.count.negative { color: #f87171; }   /* red when below 0    */
+
+/* Brief scale-up animation when value changes */
+.count.bump {
+  transform: scale(1.12);
+}
+
+/* ── Buttons ──────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.2s;
+}
+
+.btn:hover  { transform: translateY(-2px); }
+.btn:active { transform: translateY(0);    }
+
+.btn-minus {
+  width: 56px;
+  height: 56px;
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.btn-minus:hover { background: rgba(248, 113, 113, 0.25); }
+
+.btn-plus {
+  width: 56px;
+  height: 56px;
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+.btn-plus:hover { background: rgba(74, 222, 128, 0.25); }
+
+.btn-reset {
+  padding: 0 20px;
+  height: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+}
+.btn-reset:hover { background: rgba(255, 255, 255, 0.14); }

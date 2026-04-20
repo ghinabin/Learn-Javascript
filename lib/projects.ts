@@ -11,6 +11,7 @@ export const PROJECTS: Project[] = [
     tier: 1,
     tierName: "Fundamentals",
     tagline: "Click a button — background becomes a random color. Simple. Powerful.",
+    previewPath: "/previews/color-flipper/index.html",
     hasLesson: true,
     concepts: [
       {
@@ -284,6 +285,7 @@ window.addEventListener("keydown", function(e) {
     id: 2, slug: "counter-app", name: "Counter App",
     tier: 1, tierName: "Fundamentals", hasLesson: false,
     tagline: "Increment, decrement, reset — with conditional color changes.",
+    previewPath: "/previews/counter-app/index.html",
     concepts: [], steps: [],
   },
   {
@@ -414,4 +416,23 @@ export function getProject(slug: string): Project | undefined {
 
 export function getProjectsByTier(tier: number): Project[] {
   return PROJECTS.filter((p) => p.tier === tier);
+}
+
+export function getAdjacentProjects(slug: string): { prev: Project | null; next: Project | null } {
+  const idx = PROJECTS.findIndex((p) => p.slug === slug);
+  if (idx === -1) return { prev: null, next: null };
+  return {
+    prev: idx > 0 ? PROJECTS[idx - 1] : null,
+    next: idx < PROJECTS.length - 1 ? PROJECTS[idx + 1] : null,
+  };
+}
+
+export function getTierPosition(slug: string): { position: number; total: number } {
+  const project = PROJECTS.find((p) => p.slug === slug);
+  if (!project) return { position: 0, total: 0 };
+  const tierProjects = PROJECTS.filter((p) => p.tier === project.tier);
+  return {
+    position: tierProjects.findIndex((p) => p.slug === slug) + 1,
+    total: tierProjects.length,
+  };
 }

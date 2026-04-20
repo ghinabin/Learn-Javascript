@@ -11,6 +11,9 @@ export interface Concept {
   explanation: string;
   examples: CodeExample[];
   keyPoint?: string;
+  // Optional beginner-UX fields — add these as you write each project's lesson
+  whyItMatters?: string;   // motivation: why does a beginner need this concept?
+  commonMistake?: string;  // the single most common error beginners make here
 }
 
 export interface BuildStep {
@@ -18,6 +21,7 @@ export interface BuildStep {
   title: string;
   hint?: string;
   isBonus?: boolean;
+  commonError?: string;    // what typically goes wrong at this specific step
 }
 
 export interface Project {
@@ -27,6 +31,7 @@ export interface Project {
   tier: number;
   tierName: string;
   tagline: string;
+  previewPath?: string;
   concepts: Concept[];
   steps: BuildStep[];
   hasLesson: boolean;

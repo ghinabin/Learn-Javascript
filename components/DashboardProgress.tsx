@@ -76,32 +76,42 @@ export default function DashboardProgress() {
             {/* Cards grid */}
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
               gap: 10,
             }}>
               {projects.map((p) => {
                 const isDone = completedSlugs.has(p.slug);
-                const isCurrent = p.id === 1 && !isDone && completed === 0;
-                const isLocked = !p.hasLesson && !isDone;
+                const prevProject = PROJECTS.find((prev) => prev.id === p.id - 1);
+                const prevDone = p.id === 1 || (prevProject ? completedSlugs.has(prevProject.slug) : false);
+
+                // Three mutually exclusive states for incomplete projects:
+                // locked = previous project not finished yet
+                // coming-soon = unlocked but lesson not written yet
+                // active = ready to open and work on
+                const isLocked = !prevDone && !isDone;
+                const isComingSoon = prevDone && !p.hasLesson && !isDone;
+                const isActive = prevDone && p.hasLesson && !isDone;
+                const isClickable = isDone || isActive;
 
                 return (
                   <Link
                     key={p.id}
-                    href={p.hasLesson ? `/projects/${p.slug}` : "#"}
+                    href={isClickable ? `/projects/${p.slug}` : "#"}
                     style={{ textDecoration: "none" }}
+                    aria-disabled={!isClickable}
                   >
                     <div style={{
                       position: "relative",
-                      background: isDone ? meta.bg : isCurrent ? meta.bg : "var(--surface)",
-                      border: `1px solid ${isDone ? meta.color + "88" : isCurrent ? meta.color : "var(--surface-2)"}`,
+                      background: isDone ? meta.bg : isActive ? meta.bg : "var(--surface)",
+                      border: `1px solid ${isDone ? meta.color + "88" : isActive ? meta.color : "var(--surface-2)"}`,
                       borderRadius: 10,
                       padding: "14px 16px",
-                      cursor: p.hasLesson ? "pointer" : "default",
-                      opacity: isLocked ? 0.45 : 1,
+                      cursor: isClickable ? "pointer" : "default",
+                      opacity: isLocked ? 0.35 : isComingSoon ? 0.6 : 1,
                       transition: "transform 0.15s, box-shadow 0.15s",
                     }}
                       onMouseEnter={(e) => {
-                        if (p.hasLesson) {
+                        if (isClickable) {
                           (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
                           (e.currentTarget as HTMLDivElement).style.boxShadow = `0 4px 20px ${meta.color}22`;
                         }
@@ -111,8 +121,8 @@ export default function DashboardProgress() {
                         (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
                       }}
                     >
-                      {/* Top accent bar for current */}
-                      {isCurrent && (
+                      {/* Top accent bar for active (next to build) */}
+                      {isActive && (
                         <div style={{
                           position: "absolute", top: 0, left: 0, right: 0, height: 2,
                           background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)`,
@@ -122,7 +132,7 @@ export default function DashboardProgress() {
 
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                         <span style={{ fontSize: 14 }}>
-                          {isDone ? "✅" : isCurrent ? "▶️" : "🔒"}
+                          {isDone ? "✅" : isActive ? "▶️" : isComingSoon ? "🔜" : "🔒"}
                         </span>
                         <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 500 }}>
                           #{String(p.id).padStart(2, "0")}
@@ -132,19 +142,18 @@ export default function DashboardProgress() {
                       <div style={{
                         fontSize: 14, fontWeight: 600, lineHeight: 1.3,
                         fontFamily: "var(--font-sans)",
-                        color: isDone ? meta.color : isCurrent ? "#fafafa" : "var(--subtle)",
+                        color: isDone ? meta.color : isActive ? "#fafafa" : "var(--subtle)",
                       }}>
                         {p.name}
                       </div>
 
-                      {p.hasLesson && (
-                        <div style={{
-                          marginTop: 8, fontSize: 10, fontWeight: 700, color: meta.color,
-                          textTransform: "uppercase", letterSpacing: "1px",
-                        }}>
-                          {isDone ? "Done ✓" : isCurrent ? "Start →" : "Open →"}
-                        </div>
-                      )}
+                      <div style={{
+                        marginTop: 8, fontSize: 10, fontWeight: 700,
+                        textTransform: "uppercase", letterSpacing: "1px",
+                        color: isDone ? meta.color : isActive ? meta.color : isComingSoon ? "var(--muted)" : "transparent",
+                      }}>
+                        {isDone ? "Done ✓" : isActive ? "Start →" : isComingSoon ? "Coming Soon" : "Locked"}
+                      </div>
                     </div>
                   </Link>
                 );
