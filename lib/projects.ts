@@ -17,6 +17,7 @@ export const PROJECTS: Project[] = [
       {
         id: "variables",
         title: "Variables — const & let",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const",
         explanation:
           "A variable is a named container that holds a value. JavaScript has two modern keywords for this: const and let.\n\nconst means the variable's value (or reference) will never be reassigned — use this by default.\nlet means you plan to reassign the variable later.\n\nYou'll use const for almost everything in this project.",
         examples: [
@@ -49,6 +50,7 @@ const my-var = "x";     // hyphens not allowed`,
       {
         id: "arrays",
         title: "Arrays — Ordered Lists",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
         explanation:
           "An array stores multiple values in a single variable, in order. Each value has a position called an index — and indexes start at 0, not 1.\n\nYour colors array already exists in app.js. It holds 12 hex color strings you'll pick from randomly.",
         examples: [
@@ -81,6 +83,7 @@ colors.length        // 12`,
       {
         id: "functions",
         title: "Functions — Reusable Actions",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
         explanation:
           "A function is a named block of code that only runs when you call it. You define it once, then call it as many times as you want.\n\nIn this project you'll write a changeColor function — define it once, then attach it to the button so it runs on every click.",
         examples: [
@@ -111,6 +114,7 @@ greet();  // "Hi"`,
       {
         id: "dom",
         title: "The DOM — JavaScript Talks to HTML",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById",
         explanation:
           "DOM stands for Document Object Model. When a browser loads your HTML, it creates a JS-accessible version of every element. You can grab any element by its id attribute, then read or change it.\n\nTwo things you'll do in this project:\n1. Grab the button and the color display element.\n2. Change body.style.backgroundColor to update the page color.",
         examples: [
@@ -144,6 +148,7 @@ document.body.style.backgroundColor = "#3498db";
       {
         id: "math-random",
         title: "Math.random — Generating Randomness",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random",
         explanation:
           "Math.random() gives a random decimal between 0 (inclusive) and 1 (exclusive). By itself that's useless for picking an array index — so you multiply by the array length, then floor it (round down to a whole number) with Math.floor().",
         examples: [
@@ -176,6 +181,7 @@ const color = colors[index];   // e.g. "#3498db"`,
       {
         id: "event-listener",
         title: "addEventListener — React to User Actions",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener",
         explanation:
           'addEventListener tells the browser: "watch THIS element, and whenever THIS event happens, run THIS function." The event here is "click".\n\nThe function you pass is called a callback — it doesn\'t run immediately, it runs only when the event fires.',
         examples: [
@@ -210,53 +216,62 @@ window.addEventListener("keydown", function(e) {
     steps: [
       {
         id: "s1",
-        title: "Open 01-color-flipper/index.html in your editor",
+        title: "Open 01-color-flipper/ in your editor — look at index.html and app.js",
         hint: "Find the id attributes on the button and the <strong> tag. You'll need these exact strings.",
       },
       {
         id: "s2",
         title: 'In app.js, grab the button: const btn = document.getElementById("btn")',
         hint: 'The id in your HTML is btn — no # here, that\'s CSS syntax. Just the string "btn".',
+        relatedConceptIds: ["variables", "dom"],
       },
       {
         id: "s3",
         title: 'Grab the color display: const colorCode = document.getElementById("color-code")',
         hint: "Notice the id has a hyphen: color-code. In HTML ids can have hyphens, but JS variable names can't — that's why we named the variable colorCode (camelCase).",
+        relatedConceptIds: ["variables", "dom"],
       },
       {
         id: "s4",
         title: "Look at the colors array already in app.js — it has 12 hex strings",
-        hint: "You don't need to change this. Just understand: colors[0] is \"#e74c3c\", colors.length is 12.",
+        hint: 'You don\'t need to change this. Just understand: colors[0] is "#e74c3c", colors.length is 12.',
+        relatedConceptIds: ["arrays"],
       },
       {
         id: "s5",
         title: "Write the function declaration: function changeColor() { }",
         hint: "Just the empty shell for now. function keyword → name → () → curly braces.",
+        relatedConceptIds: ["functions"],
       },
       {
         id: "s6",
         title: "Inside the function, compute a random index using Math.floor and Math.random",
         hint: "const index = Math.floor(Math.random() * colors.length)",
+        relatedConceptIds: ["math-random", "arrays"],
       },
       {
         id: "s7",
         title: "Get the color at that index: const color = colors[index]",
         hint: "Array indexing — square brackets with the index variable inside.",
+        relatedConceptIds: ["arrays"],
       },
       {
         id: "s8",
         title: "Set the background: document.body.style.backgroundColor = color",
         hint: "backgroundColor is camelCase in JS (CSS uses background-color with a hyphen).",
+        relatedConceptIds: ["dom"],
       },
       {
         id: "s9",
         title: "Update the display text: colorCode.textContent = color",
         hint: "textContent sets the text inside an element. You're showing the hex value like #3498db.",
+        relatedConceptIds: ["dom"],
       },
       {
         id: "s10",
         title: 'Outside the function, attach the listener: btn.addEventListener("click", changeColor)',
         hint: "No parentheses after changeColor — you're passing the function reference, not calling it.",
+        relatedConceptIds: ["event-listener"],
       },
       {
         id: "s11",
@@ -268,6 +283,7 @@ window.addEventListener("keydown", function(e) {
         title: "BONUS: Make the spacebar also trigger a color change",
         hint: 'window.addEventListener("keydown", function(e) { if (e.key === " ") changeColor(); })',
         isBonus: true,
+        relatedConceptIds: ["event-listener"],
       },
       {
         id: "bonus2",
@@ -276,17 +292,289 @@ window.addEventListener("keydown", function(e) {
         isBonus: true,
       },
     ],
+    setupInfo: {
+      folder: "01-color-flipper",
+      htmlSnippet: `<strong id="color-code">#ffffff</strong>\n<button id="btn">Click Me</button>`,
+      jsScaffold: `const colors = [\n  "#e74c3c", "#3498db", "#2ecc71", "#f39c12",\n  "#9b59b6", "#1abc9c", "#e67e22", "#e91e63",\n  "#00bcd4", "#8bc34a", "#ff5722", "#607d8b",\n];\n\n// ↑ Already written for you. Write everything below.`,
+    },
   },
 
   // ─────────────────────────────────────────────────────────────────
   // Projects 2-22: basic info only (lessons added as you progress)
   // ─────────────────────────────────────────────────────────────────
   {
-    id: 2, slug: "counter-app", name: "Counter App",
-    tier: 1, tierName: "Fundamentals", hasLesson: false,
+    id: 2,
+    slug: "counter-app",
+    name: "Counter App",
+    tier: 1,
+    tierName: "Fundamentals",
+    hasLesson: true,
     tagline: "Increment, decrement, reset — with conditional color changes.",
     previewPath: "/previews/counter-app/index.html",
-    concepts: [], steps: [],
+    concepts: [
+      {
+        id: "let-mutable",
+        title: "let — Mutable Variables",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let",
+        explanation:
+          "In Project 01, everything was const. Here you need a variable whose value changes every time a button is clicked. const would throw an error the moment you tried to reassign it.\n\nlet declares a variable that CAN be reassigned later. Use it when you know the value will change — like a score, a toggle state, or a counter.\n\nThe rule of thumb: start with const. If you get an assignment error, switch to let.",
+        examples: [
+          {
+            label: "const vs let",
+            code: `// const — value can never change
+const name = "Nabin";
+name = "Bob";       // ❌ TypeError: Assignment to constant variable
+
+// let — value CAN change
+let count = 0;
+count = count + 1;  // ✅ now count is 1
+count += 1;         // ✅ shorthand — now count is 2
+count++;            // ✅ increment shorthand — now count is 3`,
+          },
+        ],
+        keyPoint: "Use const by default; only reach for let when the value genuinely needs to change.",
+        whyItMatters: "Your count variable changes on every button click — const would crash the app.",
+        commonMistake: "Using let for everything 'to be safe.' Overusing let makes it harder to read code — you can't tell at a glance what's meant to change.",
+      },
+      {
+        id: "if-else",
+        title: "if / else — Conditional Logic",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else",
+        explanation:
+          "The counter needs to show different colors depending on the value. That decision — 'if positive do X, if negative do Y, otherwise do Z' — is if/else.\n\nAn if statement runs a block of code only when a condition is true. else if chains additional conditions. else is the fallback when nothing above matched.\n\nJavaScript evaluates the condition between the (). Numbers: 0 is falsy, everything else is truthy. Comparison operators (>, <, ===) produce true or false.",
+        examples: [
+          {
+            label: "if / else if / else",
+            code: `let count = -3;
+
+if (count > 0) {
+  console.log("positive");   // skipped
+} else if (count < 0) {
+  console.log("negative");   // ← runs this
+} else {
+  console.log("zero");       // skipped
+}`,
+          },
+          {
+            label: "Common mistake: = vs ===",
+            code: `// ❌ Assignment inside condition — always falsy!
+if (count = 0) { ... }
+
+// ✅ Comparison
+if (count === 0) { ... }
+if (count > 0)  { ... }
+if (count < 0)  { ... }`,
+          },
+        ],
+        keyPoint: "=== checks equality; = assigns. In a condition, you almost always want ===, >, or <.",
+        whyItMatters: "Without if/else, you can't change the number color based on whether it's positive or negative.",
+        commonMistake: "Using = (assignment) instead of === (comparison) inside conditions: if (count = 0) always sets count to 0.",
+      },
+      {
+        id: "function-syntax",
+        title: "Three Ways to Write a Function",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+        explanation:
+          "JavaScript has three common function syntaxes. They all define reusable code, but have small differences in hoisting.\n\nFunction declarations are hoisted — you can call them before the line where they're defined. Function expressions and arrow functions are not hoisted.\n\nFor Tier 1, the practical rule: all three are called identically, so pick the style that reads cleanest.",
+        examples: [
+          {
+            label: "All three forms",
+            code: `// 1. Function DECLARATION — hoisted
+function increment() {
+  count++;
+  updateDisplay();
+}
+
+// 2. Function EXPRESSION — stored in a variable
+const decrement = function() {
+  count--;
+  updateDisplay();
+};
+
+// 3. Arrow function — compact, modern
+const reset = () => {
+  count = 0;
+  updateDisplay();
+};
+
+// All three are called identically:
+increment();
+decrement();
+reset();`,
+          },
+        ],
+        keyPoint: "Pass function references to addEventListener — no parentheses. increment is a reference; increment() is a call.",
+        whyItMatters: "You'll see all three forms in real codebases. This project intentionally uses one of each so you recognise them.",
+        commonMistake: "Writing btn.addEventListener('click', increment()) with parentheses. The () calls the function immediately instead of passing it as a callback.",
+      },
+      {
+        id: "classlist",
+        title: "classList — Adding and Removing CSS Classes",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/Element/classList",
+        explanation:
+          "Changing colors with element.style.color = 'red' works but mixes styling into JavaScript. The cleaner approach: define .positive and .negative classes in CSS, then toggle them with classList. The CSS stays in CSS.\n\nEvery DOM element has a classList property — a live list of its CSS classes. You can add, remove, toggle, and check for classes using its methods.\n\nThe key pattern: before adding a new class, remove all conflicting classes first.",
+        examples: [
+          {
+            label: "classList methods",
+            code: `const el = document.getElementById("count");
+
+el.classList.add("positive");          // adds the class
+el.classList.remove("negative");       // removes (no error if absent)
+el.classList.toggle("active");         // adds if absent, removes if present
+el.classList.contains("positive");     // → true / false`,
+          },
+          {
+            label: "The pattern used in this project",
+            code: `// Always remove both first, then add the right one
+el.classList.remove("positive", "negative");
+
+if (count > 0)      el.classList.add("positive");
+else if (count < 0) el.classList.add("negative");
+// else zero → both removed, default white color`,
+          },
+        ],
+        keyPoint: "Always remove conflicting classes before adding a new one.",
+        whyItMatters: "classList keeps style decisions in CSS where they belong, and makes it easy to swap styles without touching the stylesheet.",
+        commonMistake: "Forgetting to remove the old class before adding the new one. The element accumulates classes: class='positive negative' — both green and red rules apply.",
+      },
+      {
+        id: "update-display",
+        title: "The updateDisplay Pattern — Single Source of Truth",
+        mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+        explanation:
+          "If you update the DOM in three places (inside increment, decrement, reset), you'll forget to update one of them later. One function that syncs everything is safer and easier to extend.\n\nThis is a mini architecture decision: state (the count variable) is separate from presentation (what the screen shows). You change state first, then call one function to bring the display in sync. This pattern scales to much larger apps.",
+        examples: [
+          {
+            label: "State + display separation",
+            code: `let count = 0;
+
+function updateDisplay() {
+  countEl.textContent = count;           // sync text
+
+  countEl.classList.remove("positive", "negative");
+  if (count > 0)      countEl.classList.add("positive");
+  else if (count < 0) countEl.classList.add("negative");
+}
+
+function increment() {
+  count++;           // 1. change state
+  updateDisplay();   // 2. sync display
+}
+
+function decrement() {
+  count--;
+  updateDisplay();
+}
+
+function reset() {
+  count = 0;
+  updateDisplay();
+}`,
+          },
+        ],
+        keyPoint: "Change the variable, then call one update function. Never update the DOM in multiple places for the same piece of state.",
+        whyItMatters: "This is the foundation of every UI framework (React, Vue, Angular). You're learning it manually first so the concept is crystal clear.",
+        commonMistake: "Setting countEl.textContent directly inside each button handler instead of going through updateDisplay.",
+      },
+    ],
+    steps: [
+      {
+        id: "s1",
+        title: "Open 02-counter-app/index.html — find the ids: count, btn-increment, btn-decrement, btn-reset",
+        hint: "Look at the id attributes on each element. You'll use these exact strings in getElementById.",
+      },
+      {
+        id: "s2",
+        title: "In app.js, the starter already has let count = 0 — understand why let, not const",
+        hint: "count will change on every button click. const would throw TypeError on reassignment.",
+        commonError: "Changing let to const 'by habit' — the app will crash the moment you click a button.",
+        relatedConceptIds: ["let-mutable"],
+      },
+      {
+        id: "s3",
+        title: "Grab all four DOM elements with getElementById: countEl, btnIncrement, btnDecrement, btnReset",
+        hint: "const countEl = document.getElementById('count') — repeat for each button using their ids.",
+        relatedConceptIds: ["let-mutable"],
+      },
+      {
+        id: "s4",
+        title: "Write function updateDisplay() — set countEl.textContent = count",
+        hint: "Just the text update for now: countEl.textContent = count. JavaScript coerces the number to a string automatically.",
+        commonError: "Forgetting that textContent sets a string — but count is a number. Don't worry, JS coerces it automatically.",
+        relatedConceptIds: ["update-display"],
+      },
+      {
+        id: "s5",
+        title: "Inside updateDisplay, add the classList logic: remove both classes, then conditionally add one",
+        hint: "countEl.classList.remove('positive', 'negative') — then if (count > 0) add positive, else if (count < 0) add negative.",
+        commonError: "Adding without removing first → both classes stack up. Always remove both before adding one.",
+        relatedConceptIds: ["classlist", "if-else"],
+      },
+      {
+        id: "s6",
+        title: "Write function increment() as a function declaration — add 1 to count, then call updateDisplay()",
+        hint: "count++ or count += 1, then updateDisplay(). Change state first, then sync the display.",
+        commonError: "Updating countEl.textContent directly instead of going through updateDisplay.",
+        relatedConceptIds: ["function-syntax", "update-display", "let-mutable"],
+      },
+      {
+        id: "s7",
+        title: "Write const decrement as a function expression — subtract 1, call updateDisplay()",
+        hint: "const decrement = function() { count--; updateDisplay(); };  — notice the semicolon after the closing }.",
+        commonError: "Missing the semicolon after the closing } of a function expression.",
+        relatedConceptIds: ["function-syntax", "update-display"],
+      },
+      {
+        id: "s8",
+        title: "Write const reset as an arrow function — set count to 0, call updateDisplay()",
+        hint: "const reset = () => { count = 0; updateDisplay(); };",
+        relatedConceptIds: ["function-syntax", "update-display"],
+      },
+      {
+        id: "s9",
+        title: "Attach all three event listeners to their buttons",
+        hint: "btnIncrement.addEventListener('click', increment) — no parentheses after the function name!",
+        commonError: "Writing increment() with parentheses — that calls the function immediately instead of passing it as a callback.",
+        relatedConceptIds: ["function-syntax"],
+      },
+      {
+        id: "s10",
+        title: "Call updateDisplay() once at the bottom of the file to set the initial state",
+        hint: "Without this, the DOM won't reflect count = 0 until a button is clicked.",
+        relatedConceptIds: ["update-display"],
+      },
+      {
+        id: "s11",
+        title: "Open index.html in your browser — test all three buttons. Check DevTools console if nothing works.",
+        hint: "F12 → Console tab. Red error messages show exactly what went wrong and on which line.",
+      },
+      {
+        id: "bonus1",
+        title: "BONUS: Add keyboard shortcuts — ArrowUp increments, ArrowDown decrements, R resets",
+        hint: "window.addEventListener('keydown', (e) => { if (e.key === 'ArrowUp') increment(); else if (e.key === 'ArrowDown') decrement(); else if (e.key === 'r') reset(); })",
+        isBonus: true,
+        relatedConceptIds: ["function-syntax"],
+      },
+      {
+        id: "bonus2",
+        title: "BONUS: Add a min/max limit (e.g. −10 to 10) — disable buttons at the boundary",
+        hint: "Check the value before changing it: if (count < 10) { count++; updateDisplay(); }. Also set btnIncrement.disabled = count >= 10 inside updateDisplay.",
+        isBonus: true,
+        relatedConceptIds: ["if-else"],
+      },
+      {
+        id: "bonus3",
+        title: "BONUS: Add a step-size input — instead of always ±1, use whatever number the user types",
+        hint: "const step = parseInt(stepInput.value) || 1 — then use count += step inside increment.",
+        isBonus: true,
+        relatedConceptIds: ["let-mutable"],
+      },
+    ],
+    setupInfo: {
+      folder: "02-counter-app",
+      htmlSnippet: `<h1 id="count">0</h1>\n<button id="btn-decrement">−</button>\n<button id="btn-reset">Reset</button>\n<button id="btn-increment">+</button>`,
+      jsScaffold: `let count = 0;\n\n// ↑ Already written for you. Write everything below.`,
+    },
   },
   {
     id: 3, slug: "form-validator", name: "Form Validator",

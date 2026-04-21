@@ -11,9 +11,9 @@ export interface Concept {
   explanation: string;
   examples: CodeExample[];
   keyPoint?: string;
-  // Optional beginner-UX fields — add these as you write each project's lesson
-  whyItMatters?: string;   // motivation: why does a beginner need this concept?
-  commonMistake?: string;  // the single most common error beginners make here
+  whyItMatters?: string;
+  commonMistake?: string;
+  mdnUrl?: string;         // canonical MDN reference link
 }
 
 export interface BuildStep {
@@ -21,7 +21,14 @@ export interface BuildStep {
   title: string;
   hint?: string;
   isBonus?: boolean;
-  commonError?: string;    // what typically goes wrong at this specific step
+  commonError?: string;
+  relatedConceptIds?: string[];  // which concept cards to reference for this step
+}
+
+export interface SetupInfo {
+  folder: string;          // e.g. "01-color-flipper"
+  htmlSnippet: string;     // the key HTML elements the user will target
+  jsScaffold: string;      // what's pre-written in the JS starter file
 }
 
 export interface Project {
@@ -35,6 +42,7 @@ export interface Project {
   concepts: Concept[];
   steps: BuildStep[];
   hasLesson: boolean;
+  setupInfo?: SetupInfo;
 }
 
 export const TIER_META: Record<number, { name: string; color: string; bg: string; badge: string }> = {
