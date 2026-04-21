@@ -138,6 +138,17 @@ export default function BuildChecklist({ projectSlug, steps, nextProject, concep
     return () => document.removeEventListener("click", handleOutside);
   }, [popover]);
 
+  // Auto-close when the bulb button scrolls out of view
+  useEffect(() => {
+    if (!popover) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (!entry.isIntersecting) setPopover(null); },
+      { threshold: 0 }
+    );
+    observer.observe(popover.buttonEl);
+    return () => observer.disconnect();
+  }, [popover]);
+
   // Load progress
   useEffect(() => {
     if (isAuthed) {
@@ -179,9 +190,10 @@ export default function BuildChecklist({ projectSlug, steps, nextProject, concep
       const arr = [...next];
       try { localStorage.setItem(storageKey, JSON.stringify(arr)); } catch {}
       if (isAuthed) syncToDB(arr);
-      window.dispatchEvent(new CustomEvent("progress-update"));
       return next;
     });
+    // Dispatch outside the updater — firing inside caused setState-during-render
+    window.dispatchEvent(new CustomEvent("progress-update"));
   }
 
   function handleBulbToggle(stepId: string, hint: string, el: HTMLButtonElement) {

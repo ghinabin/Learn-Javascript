@@ -6,6 +6,8 @@ import BuildChecklist from "@/components/BuildChecklist";
 import CodeBlock from "@/components/CodeBlock";
 import ProgressBar from "@/components/ProgressBar";
 import AuthButton from "@/components/AuthButton";
+import PreviewModal from "@/components/PreviewModal";
+import ProjectNav from "@/components/ProjectNav";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -22,32 +24,17 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <main style={{ minHeight: "100vh", padding: "0 0 80px" }}>
 
-      {/* Top nav — content aligned to same container as page body */}
-      <nav style={{
-        borderBottom: "1px solid var(--surface-2)",
-        position: "sticky", top: 0, zIndex: 10,
-        background: "var(--bg)",
-        backdropFilter: "blur(8px)",
-      }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 40px", display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/" style={{
-            fontSize: 12, color: "var(--muted)", textDecoration: "none",
-            display: "flex", alignItems: "center", gap: 6,
-          }}>
-            ← Dashboard
-          </Link>
-          <span style={{ color: "var(--surface-2)" }}>|</span>
-          <span style={{
-            fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px",
-            color: meta.color, background: meta.badge + "33", padding: "2px 8px", borderRadius: 99,
-          }}>
-            Tier {project.tier} · {meta.name}
-          </span>
-          <div style={{ marginLeft: "auto" }}>
-            <AuthButton />
-          </div>
-        </div>
-      </nav>
+      {/* Top nav */}
+      <ProjectNav
+        projectId={project.id}
+        projectName={project.name}
+        tierNumber={project.tier}
+        tierName={meta.name}
+        tierColor={meta.color}
+        tierBadge={meta.badge}
+      >
+        <AuthButton />
+      </ProjectNav>
 
       {/* Full-width progress bar — always visible under nav */}
       <ProgressBar
@@ -65,21 +52,11 @@ export default async function ProjectPage({ params }: Props) {
               Project #{String(project.id).padStart(2, "0")}
             </div>
             {project.previewPath && (
-              <a
-                href={project.previewPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontSize: 12, color: meta.color,
-                  background: meta.badge + "22",
-                  border: `1px solid ${meta.color}44`,
-                  borderRadius: 99, padding: "4px 12px",
-                  textDecoration: "none",
-                  display: "flex", alignItems: "center", gap: 6,
-                }}
-              >
-                ▶ See it live
-              </a>
+              <PreviewModal
+                previewPath={project.previewPath}
+                accentColor={meta.color}
+                badgeColor={meta.badge}
+              />
             )}
           </div>
           <h1 style={{
@@ -106,6 +83,9 @@ export default async function ProjectPage({ params }: Props) {
             ))}
           </div>
         </div>
+
+        {/* Sentinel — ProjectNav watches this to know when the title has scrolled away */}
+        <div id="title-sentinel" aria-hidden="true" />
 
         {/* Two-column layout: concepts left, checklist right */}
         <div className="grid items-start gap-[32px] lg:gap-[48px] lg:[grid-template-columns:minmax(0,1fr)_420px]">
