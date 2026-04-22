@@ -43,6 +43,7 @@ export interface Project {
   steps: BuildStep[];
   hasLesson: boolean;
   setupInfo?: SetupInfo;
+  solutionPath?: string;   // e.g. "/starters/01-color-flipper-solution.zip"
 }
 
 export const TIER_META: Record<number, { name: string; color: string; bg: string; badge: string }> = {

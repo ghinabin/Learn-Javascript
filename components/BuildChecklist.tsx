@@ -16,6 +16,7 @@ interface Props {
   steps: BuildStep[];
   nextProject?: NextProjectInfo | null;
   conceptTitles?: Record<string, string>;
+  solutionPath?: string;
 }
 
 interface PopoverState {
@@ -121,7 +122,7 @@ function BulbButton({
   );
 }
 
-export default function BuildChecklist({ projectSlug, steps, nextProject, conceptTitles = {} }: Props) {
+export default function BuildChecklist({ projectSlug, steps, nextProject, conceptTitles = {}, solutionPath }: Props) {
   const storageKey = `checklist-${projectSlug}`;
   const { data: session } = useSession();
   const isAuthed = !!session?.user;
@@ -129,6 +130,8 @@ export default function BuildChecklist({ projectSlug, steps, nextProject, concep
   const [done, setDone] = useState<Set<string>>(new Set());
   const [syncing, setSyncing] = useState(false);
   const [popover, setPopover] = useState<PopoverState | null>(null);
+  const [solutionOpen, setSolutionOpen] = useState(false);
+  const [solutionConfirmed, setSolutionConfirmed] = useState(false);
 
   // Close popover on outside click
   useEffect(() => {
@@ -386,6 +389,108 @@ export default function BuildChecklist({ projectSlug, steps, nextProject, concep
                 );
               })}
             </ol>
+          </div>
+        )}
+
+        {/* Compare Your Solution */}
+        {solutionPath && (
+          <div style={{ marginTop: 24 }}>
+            {!solutionOpen ? (
+              <button
+                onClick={() => setSolutionOpen(true)}
+                style={{
+                  width: "100%",
+                  background: "transparent",
+                  border: "1px dashed var(--border)",
+                  borderRadius: 10,
+                  padding: "12px 16px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  color: "var(--muted)",
+                  fontSize: 12,
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                <span>Compare your solution</span>
+                <span style={{ fontSize: 10, opacity: 0.5 }}>↓</span>
+              </button>
+            ) : !solutionConfirmed ? (
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--surface-2)",
+                borderRadius: 10,
+                padding: "16px",
+              }}>
+                <div style={{ fontSize: 12, color: "var(--subtle)", lineHeight: 1.7, marginBottom: 12 }}>
+                  Try the hints first — they&apos;re there for a reason. The solution is most useful after you&apos;ve attempted each step yourself.
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={() => setSolutionConfirmed(true)}
+                    style={{
+                      flex: 1,
+                      padding: "8px 12px",
+                      background: "var(--bg)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                      fontSize: 12, fontWeight: 600,
+                      color: "var(--subtle)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Show reference implementation
+                  </button>
+                  <button
+                    onClick={() => setSolutionOpen(false)}
+                    style={{
+                      padding: "8px 12px",
+                      background: "transparent",
+                      border: "none",
+                      fontSize: 12,
+                      color: "var(--muted)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Go back
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{
+                background: "var(--surface)",
+                border: "1px solid var(--surface-2)",
+                borderRadius: 10,
+                padding: "16px",
+              }}>
+                <div style={{
+                  fontSize: 10, fontWeight: 700, color: "var(--muted)",
+                  textTransform: "uppercase", letterSpacing: "1px",
+                  marginBottom: 8,
+                }}>
+                  Reference Implementation
+                </div>
+                <div style={{ fontSize: 12, color: "var(--subtle)", lineHeight: 1.6, marginBottom: 14 }}>
+                  This is one way to write it. Yours might look different — that&apos;s fine. Compare patterns, not syntax.
+                </div>
+                <a
+                  href={solutionPath}
+                  download
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    fontSize: 12, fontWeight: 700,
+                    color: "var(--subtle)",
+                    background: "var(--bg)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8, padding: "9px 14px",
+                    textDecoration: "none",
+                  }}
+                >
+                  ⬇ Download solution
+                </a>
+              </div>
+            )}
           </div>
         )}
 

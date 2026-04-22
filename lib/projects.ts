@@ -12,6 +12,7 @@ export const PROJECTS: Project[] = [
     tierName: "Fundamentals",
     tagline: "Click a button — background becomes a random color. Simple. Powerful.",
     previewPath: "/previews/color-flipper/index.html",
+    solutionPath: "/starters/01-color-flipper-solution.zip",
     hasLesson: true,
     concepts: [
       {
@@ -311,6 +312,7 @@ window.addEventListener("keydown", function(e) {
     hasLesson: true,
     tagline: "Increment, decrement, reset — with conditional color changes.",
     previewPath: "/previews/counter-app/index.html",
+    solutionPath: "/starters/02-counter-app-solution.zip",
     concepts: [
       {
         id: "let-mutable",

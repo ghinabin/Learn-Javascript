@@ -143,6 +143,7 @@ export default async function ProjectPage({ params }: Props) {
                   steps={project.steps}
                   nextProject={nextProject ? { slug: nextProject.slug, name: nextProject.name, id: nextProject.id } : null}
                   conceptTitles={Object.fromEntries(project.concepts.map((c) => [c.id, c.title]))}
+                  solutionPath={project.solutionPath}
                 />
               ) : (
                 <p style={{ fontSize: 13, color: "var(--muted)", textAlign: "center" }}>
